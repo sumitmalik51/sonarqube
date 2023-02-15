@@ -1,0 +1,28 @@
+name: SonarQube Analysis
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sonarqube:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: '11'
+
+    - name: Set up SonarQube
+      uses: sonarsource/sonarqube-action@master
+      with:
+        token: ${{ secrets.SONARQUBE_TOKEN }}
+        scanner-version: '4.6.2'
+        quality-gate-wait: true
+
+    - name: Build and analyze
+      run: |
+        ./gradlew build sonarqube
+      env:
+        SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
