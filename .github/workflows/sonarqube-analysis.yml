@@ -9,10 +9,13 @@ jobs:
   sonarqube:
     runs-on: ubuntu-latest
     steps:
-    - name: Set up JDK
-      uses: actions/setup-java@v1
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Set up .NET Core
+      uses: actions/setup-dotnet@v1
       with:
-        java-version: '11'
+        dotnet-version: '3.1'
 
     - name: Set up SonarQube
       uses: sonarsource/sonarqube-action@master
@@ -23,4 +26,9 @@ jobs:
 
     - name: Build and analyze
       run: |
-        mvn clean verify sonar:sonar -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+        dotnet restore
+        dotnet build
+        dotnet sonarscanner begin /k:${{ secrets.SONARQUBE_TOKEN }} /d:sonar.login="${{ secrets.SONARQUBE_TOKEN }}" /d:sonar.host.url="http://localhost:9000"
+        dotnet build
+        dotnet test
+        dotnet sonarscanner end /d:sonar.login="${{ secrets.SONARQUBE_TOKEN }}"
