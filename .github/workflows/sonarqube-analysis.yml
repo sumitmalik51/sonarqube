@@ -17,7 +17,7 @@ jobs:
     - name: Set up SonarQube
       uses: sonarsource/sonarqube-action@master
       with:
-        token: ${{ secrets.SONARQUBE_TOKEN }}
+        token: ${{ secrets.SONAR_TOKEN }}
         scanner-version: '4.6.2'
         quality-gate-wait: true
 
