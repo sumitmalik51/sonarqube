@@ -12,23 +12,23 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Set up .NET Core
-      uses: actions/setup-dotnet@v1
+    - name: Set up Python
+      uses: actions/setup-python@v2
       with:
-        dotnet-version: '3.1'
+        python-version: '3.x'
 
     - name: Set up SonarQube
       uses: sonarsource/sonarqube-action@master
       with:
-        token: ${{ secrets.SONARQUBE_TOKEN }}
+        token: ${{ secrets.SONAR_TOKEN }}
         scanner-version: '4.6.2'
         quality-gate-wait: true
 
     - name: Build and analyze
       run: |
-        dotnet restore
-        dotnet build
-        dotnet sonarscanner begin /k:${{ secrets.SONARQUBE_TOKEN }} /d:sonar.login="${{ secrets.SONARQUBE_TOKEN }}" /d:sonar.host.url="http://localhost:9000"
-        dotnet build
-        dotnet test
-        dotnet sonarscanner end /d:sonar.login="${{ secrets.SONARQUBE_TOKEN }}"
+        pip install -r requirements.txt
+        sonar-scanner \
+          -Dsonar.projectKey=admin \
+          -Dsonar.sources=. \
+          -Dsonar.login="${{ secrets.SONAR_TOKEN }}" \
+          -Dsonar.host.url="${{ secrets.SONAR_HOST_URL }}"
